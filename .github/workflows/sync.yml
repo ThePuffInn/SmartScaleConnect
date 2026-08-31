@@ -9,22 +9,23 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Create configuration file
-        run: |
-          cat <<EOF > scaleconnect.yaml
-          tanita:
-            username: "${{ secrets.TANITA_USERNAME }}"
-            password: "${{ secrets.TANITA_PASSWORD }}"
-          garmin:
-            username: "${{ secrets.GARMIN_USERNAME }}"
-            password: "${{ secrets.GARMIN_PASSWORD }}"
-          sync:
-            - source: tanita
-              destination: garmin
-          EOF
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Run SmartScaleConnect
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
         run: |
-          docker run --rm \
-            -v $(pwd)/scaleconnect.yaml:/app/scaleconnect.yaml \
-            ghcr.io/alexxit/smartscaleconnect:latest
+          pip install -r requirements.txt
+
+      - name: Run Direct Python Sync
+        env:
+          TANITA_USERNAME: "${{ secrets.TANITA_USERNAME }}"
+          TANITA_PASSWORD: "${{ secrets.TANITA_PASSWORD }}"
+          GARMIN_USERNAME: "${{ secrets.GARMIN_USERNAME }}"
+          GARMIN_PASSWORD: "${{ secrets.GARMIN_PASSWORD }}"
+        run: |
+          python main.py --source tanita --destination garmin
