@@ -31,7 +31,7 @@ jobs:
           # Appending '#1' tells the engine to check the second profile slot under your email.
           cat << 'EOF' > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: tanita $TANITA_USER $TANITA_PASS#1
+            from: tanita $TANITA_USER $TANITA_PASS#2
             to: garmin $GARMIN_USER $GARMIN_PASS
           EOF
           
