@@ -18,17 +18,24 @@ jobs:
           go-version: '1.24'
 
       - name: Compile and Run Sync Engine
+        env:
+          TANITA_USER: ${{ secrets.TANITA_USERNAME }}
+          TANITA_PASS: ${{ secrets.TANITA_PASSWORD }}
+          GARMIN_USER: ${{ secrets.GARMIN_USERNAME }}
+          GARMIN_PASS: ${{ secrets.GARMIN_PASSWORD }}
         run: |
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Write the credentials using strict single quotes to handle special characters
-          cat <<EOF > scaleconnect.yaml
+          # 2. Safely generate the configuration file using system variables
+          cat << 'EOF' > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: tanita '${{ secrets.TANITA_USERNAME }}' '${{ secrets.TANITA_PASSWORD }}'
-            to: garmin '${{ secrets.GARMIN_USERNAME }}' '${{ secrets.GARMIN_PASSWORD }}'
+            from: tanita $TANITA_USER $TANITA_PASS
+            to: garmin $GARMIN_USER $GARMIN_PASS
           EOF
-
           
-          # 3. Run the engine
-          ./scaleconnect
+          # 3. Use 'envsubst' to inject variables safely, preserving special characters
+          envsubst < scaleconnect.yaml > config_final.yaml
+          
+          # 4. Run the engine
+          ./scaleconnect -c config_final.yaml
