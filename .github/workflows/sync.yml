@@ -22,10 +22,11 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Direct Python Sync
-        env:
-          TANITA_USERNAME: "${{ secrets.TANITA_USERNAME }}"
-          TANITA_PASSWORD: "${{ secrets.TANITA_PASSWORD }}"
-          GARMIN_USERNAME: "${{ secrets.GARMIN_USERNAME }}"
-          GARMIN_PASSWORD: "${{ secrets.GARMIN_PASSWORD }}"
         run: |
-          python main.py --source tanita --destination garmin
+          python main.py \
+            --tanita-user "${{ secrets.TANITA_USERNAME }}" \
+            --tanita-pass "${{ secrets.TANITA_PASSWORD }}" \
+            --garmin-user "${{ secrets.GARMIN_USERNAME }}" \
+            --garmin-pass "${{ secrets.GARMIN_PASSWORD }}" \
+            --source tanita \
+            --destination garmin
