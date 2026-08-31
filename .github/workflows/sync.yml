@@ -19,11 +19,11 @@ jobs:
 
       - name: Compile and Run Sync Engine
         run: |
-          # Build the raw code into an executable application
+          # 1. Build the executable
           go build -o scaleconnect .
           
-          # Run the engine directly using raw inline config structure
-          ./scaleconnect -c '
+          # 2. Write the credentials to a physical configuration file
+          cat <<EOF > config.yaml
           tanita:
             username: "${{ secrets.TANITA_USERNAME }}"
             password: "${{ secrets.TANITA_PASSWORD }}"
@@ -33,4 +33,7 @@ jobs:
           sync:
             - source: tanita
               destination: garmin
-          '
+          EOF
+          
+          # 3. Run the engine by pointing it to the file path
+          ./scaleconnect -c config.yaml
