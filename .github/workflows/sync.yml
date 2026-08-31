@@ -27,11 +27,11 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Write credentials into a perfectly flat format structure
-          # If your app account is registered in Europe, change 'tanita:us' to 'tanita:eu' below.
+          # 2. Write credentials into the default flat format string
+          # Appending '#1' tells the engine to check the second profile slot under your email.
           cat << 'EOF' > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: tanita:eu $TANITA_USER $TANITA_PASS
+            from: tanita $TANITA_USER $TANITA_PASS#0
             to: garmin $GARMIN_USER $GARMIN_PASS
           EOF
           
