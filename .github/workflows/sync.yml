@@ -22,16 +22,12 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-                    # 2. Write the credentials to the file using the app's structural format with Region flags
+          # 2. Write the credentials to the flat format string (using tanita-us for USA or tanita-eu for Europe)
           cat <<EOF > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: 
-              tanita: "${{ secrets.TANITA_USERNAME }} ${{ secrets.TANITA_PASSWORD }}"
-              region: eu
-            to: 
-              garmin: "${{ secrets.GARMIN_USERNAME }} ${{ secrets.GARMIN_PASSWORD }}"
+            from: tanita-eu ${{ secrets.TANITA_USERNAME }} ${{ secrets.TANITA_PASSWORD }}
+            to: garmin ${{ secrets.GARMIN_USERNAME }} ${{ secrets.GARMIN_PASSWORD }}
           EOF
-
           
           # 3. Run the engine
           ./scaleconnect
