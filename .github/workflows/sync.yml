@@ -23,10 +23,15 @@ jobs:
 
       - name: Run Direct Python Sync
         run: |
-          python main.py \
-            --tanita-user "${{ secrets.TANITA_USERNAME }}" \
-            --tanita-pass "${{ secrets.TANITA_PASSWORD }}" \
-            --garmin-user "${{ secrets.GARMIN_USERNAME }}" \
-            --garmin-pass "${{ secrets.GARMIN_PASSWORD }}" \
-            --source tanita \
-            --destination garmin
+          python main.py -c '
+          sync_task:
+            tanita:
+              username: "${{ secrets.TANITA_USERNAME }}"
+              password: "${{ secrets.TANITA_PASSWORD }}"
+            garmin:
+              username: "${{ secrets.GARMIN_USERNAME }}"
+              password: "${{ secrets.GARMIN_PASSWORD }}"
+            sync:
+              - source: tanita
+                destination: garmin
+          '
