@@ -27,15 +27,21 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Write credentials into the default flat format string
-          # Appending '#1' tells the engine to check the second profile slot under your email.
+          # 2. Write configuration using the proper Multi-line profile schema
           cat << 'EOF' > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: tanita $TANITA_USER $TANITA_PASS#2
-            to: garmin $GARMIN_USER $GARMIN_PASS
+            from:
+              type: tanita
+              username: $TANITA_USER
+              password: $TANITA_PASS
+              profile: "Catalina Ioan"
+            to:
+              type: garmin
+              username: $GARMIN_USER
+              password: $GARMIN_PASS
           EOF
           
-          # 3. Use 'envsubst' to safely pass variables
+          # 3. Use 'envsubst' to inject variables safely
           envsubst < scaleconnect.yaml > config_final.yaml
           
           # 4. Run the engine
