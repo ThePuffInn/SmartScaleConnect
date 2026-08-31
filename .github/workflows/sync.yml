@@ -27,14 +27,21 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Safely generate the configuration file using system variables
+          # 2. Safely generate a multi-line structured configuration file
           cat << 'EOF' > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: tanita $TANITA_USER $TANITA_PASS
-            to: garmin $GARMIN_USER $GARMIN_PASS
+            from:
+              type: tanita
+              username: "$TANITA_USER"
+              password: "$TANITA_PASS"
+              region: us
+            to:
+              type: garmin
+              username: "$GARMIN_USER"
+              password: "$GARMIN_PASS"
           EOF
           
-          # 3. Use 'envsubst' to inject variables safely, preserving special characters
+          # 3. Use 'envsubst' to inject variables safely
           envsubst < scaleconnect.yaml > config_final.yaml
           
           # 4. Run the engine
