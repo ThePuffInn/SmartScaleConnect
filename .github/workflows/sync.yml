@@ -27,12 +27,13 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Write the credentials to a valid layout without sequence dashes (-)
+          # 2. Write the credentials to a valid layout with a Garmin auth bypass flag
           cat << 'EOF' > scaleconnect.yaml
           sync_tanita_data:
             from: tanita $TANITA_USER $TANITA_PASS
-            to: garmin $GARMIN_USER $GARMIN_PASS
+            to: garmin $GARMIN_USER $GARMIN_PASS 0
           EOF
+
           
           # 3. Use 'envsubst' to safely pass variables
           envsubst < scaleconnect.yaml > config_final.yaml
