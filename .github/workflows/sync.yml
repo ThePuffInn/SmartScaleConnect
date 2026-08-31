@@ -1,0 +1,21 @@
+name: Run SmartScaleConnect Sync
+
+on:
+  schedule:
+    # This sets it to run automatically every day at 6:00 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # This allows you to run it manually whenever you want
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run SmartScaleConnect
+        run: |
+          docker run --rm \
+            -e TANITA_USERNAME="${{ secrets.TANITA_USERNAME }}" \
+            -e TANITA_PASSWORD="${{ secrets.TANITA_PASSWORD }}" \
+            -e GARMIN_USERNAME="${{ secrets.GARMIN_USERNAME }}" \
+            -e GARMIN_PASSWORD="${{ secrets.GARMIN_PASSWORD }}" \
+            ghcr.io/alexxit/smartscaleconnect:latest \
+            --source tanita --destination garmin
