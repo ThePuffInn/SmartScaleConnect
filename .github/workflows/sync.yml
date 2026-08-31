@@ -9,22 +9,21 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Download SmartScaleConnect Binary
-        run: |
-          # Fetch the latest Linux binary version from the developer releases
-          curl -s https://github.com \
-          | grep "browser_download_url.*linux_amd64" \
-          | cut -d : -f 2,3 \
-          | tr -d \" \
-          | wget -qi -
-          
-          # Rename and grant execution rights to the program
-          mv SmartScaleConnect_linux_amd64 smartscaleconnect
-          chmod +x smartscaleconnect
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Create Configuration File
+      - name: Set up Go compiler
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Compile and Run Sync Engine
         run: |
-          cat <<EOF > scaleconnect.yaml
+          # Build the raw code into an executable application
+          go build -o scaleconnect .
+          
+          # Run the engine directly using raw inline config structure
+          ./scaleconnect -c '
           tanita:
             username: "${{ secrets.TANITA_USERNAME }}"
             password: "${{ secrets.TANITA_PASSWORD }}"
@@ -34,8 +33,4 @@ jobs:
           sync:
             - source: tanita
               destination: garmin
-          EOF
-
-      - name: Run Native Sync
-        run: |
-          ./smartscaleconnect
+          '
