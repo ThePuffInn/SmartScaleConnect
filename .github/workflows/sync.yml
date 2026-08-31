@@ -17,9 +17,9 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install Required Packages
         run: |
-          pip install -r requirements.txt
+          pip install requests pyyaml
 
       - name: Run Direct Python Sync
         run: |
