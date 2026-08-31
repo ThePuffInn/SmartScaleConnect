@@ -22,18 +22,12 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Write the credentials to a physical configuration file with corrected keys
+          # 2. Write the credentials to the file using the app's structural format
           cat <<EOF > scaleconnect.yaml
-          tanita:
-            username: "${{ secrets.TANITA_USERNAME }}"
-            password: "${{ secrets.TANITA_PASSWORD }}"
-          garmin:
-            username: "${{ secrets.GARMIN_USERNAME }}"
-            password: "${{ secrets.GARMIN_PASSWORD }}"
-          sync:
-            - from: tanita
-              to: garmin
+          sync_tanita_to_garmin:
+            from: tanita ${{ secrets.TANITA_USERNAME }} ${{ secrets.TANITA_PASSWORD }}
+            to: garmin ${{ secrets.GARMIN_USERNAME }} ${{ secrets.GARMIN_PASSWORD }}
           EOF
           
-          # 3. Run the engine by pointing it to the default expected file name
+          # 3. Run the engine
           ./scaleconnect
