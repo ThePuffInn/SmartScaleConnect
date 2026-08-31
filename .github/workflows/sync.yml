@@ -27,21 +27,15 @@ jobs:
           # 1. Build the executable
           go build -o scaleconnect .
           
-          # 2. Safely generate a multi-line structured configuration file
+          # 2. Write credentials into a perfectly flat format structure
+          # If your app account is registered in Europe, change 'tanita:us' to 'tanita:eu' below.
           cat << 'EOF' > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from:
-              type: tanita
-              username: "$TANITA_USER"
-              password: "$TANITA_PASS"
-              region: us
-            to:
-              type: garmin
-              username: "$GARMIN_USER"
-              password: "$GARMIN_PASS"
+            from: tanita:eu $TANITA_USER $TANITA_PASS
+            to: garmin $GARMIN_USER $GARMIN_PASS
           EOF
           
-          # 3. Use 'envsubst' to inject variables safely
+          # 3. Use 'envsubst' to safely pass variables
           envsubst < scaleconnect.yaml > config_final.yaml
           
           # 4. Run the engine
