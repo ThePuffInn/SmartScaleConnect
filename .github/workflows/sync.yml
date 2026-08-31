@@ -25,8 +25,10 @@ jobs:
           # 2. Write the credentials to the file using the app's structural format
           cat <<EOF > scaleconnect.yaml
           sync_tanita_to_garmin:
-            from: tanita ${{ secrets.TANITA_USERNAME }} ${{ secrets.TANITA_PASSWORD }}
-            to: garmin ${{ secrets.GARMIN_USERNAME }} ${{ secrets.GARMIN_PASSWORD }}
+            from:
+              tanita ${{ secrets.TANITA_USERNAME }} ${{ secrets.TANITA_PASSWORD }}
+            to:
+              garmin ${{ secrets.GARMIN_USERNAME }} ${{ secrets.GARMIN_PASSWORD }}
           EOF
           
           # 3. Run the engine
