@@ -9,29 +9,33 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install Required Packages
+      - name: Download SmartScaleConnect Binary
         run: |
-          pip install requests pyyaml
+          # Fetch the latest Linux binary version from the developer releases
+          curl -s https://github.com \
+          | grep "browser_download_url.*linux_amd64" \
+          | cut -d : -f 2,3 \
+          | tr -d \" \
+          | wget -qi -
+          
+          # Rename and grant execution rights to the program
+          mv SmartScaleConnect_linux_amd64 smartscaleconnect
+          chmod +x smartscaleconnect
 
-      - name: Run Direct Python Sync
+      - name: Create Configuration File
         run: |
-          python main.py -c '
-          sync_task:
-            tanita:
-              username: "${{ secrets.TANITA_USERNAME }}"
-              password: "${{ secrets.TANITA_PASSWORD }}"
-            garmin:
-              username: "${{ secrets.GARMIN_USERNAME }}"
-              password: "${{ secrets.GARMIN_PASSWORD }}"
-            sync:
-              - source: tanita
-                destination: garmin
-          '
+          cat <<EOF > scaleconnect.yaml
+          tanita:
+            username: "${{ secrets.TANITA_USERNAME }}"
+            password: "${{ secrets.TANITA_PASSWORD }}"
+          garmin:
+            username: "${{ secrets.GARMIN_USERNAME }}"
+            password: "${{ secrets.GARMIN_PASSWORD }}"
+          sync:
+            - source: tanita
+              destination: garmin
+          EOF
+
+      - name: Run Native Sync
+        run: |
+          ./smartscaleconnect
